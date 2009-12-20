@@ -53,7 +53,7 @@ var app = dj.makeApp([
                 dj.respond(res, JSON.stringify(messages), 'text/plain');
             } else {
                 // Wait for the next message
-                var listener=message_queue.addListener('message', function() {
+                var listener=function() {
                     getMessagesSince(id, function(messages) {
                         dj.respond(res, 
                             JSON.stringify(messages), 'text/plain'
@@ -61,7 +61,8 @@ var app = dj.makeApp([
                         message_queue.removeListener('message', listener);
                         clearTimeout(timeout);
                     });
-                });
+                };
+                message_queue.addListener('message', listener);
                 var timeout = setTimeout(function() {
                     message_queue.removeListener('message', listener);
                     dj.respond(res, JSON.stringify([]), 'text/plain');
